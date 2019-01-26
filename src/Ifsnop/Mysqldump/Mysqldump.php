@@ -146,6 +146,7 @@ class Mysqldump
             'skip-dump-date' => false,
             'skip-definer' => false,
             'where' => '',
+            'keep-data' => [],
             /* deprecated */
             'disable-foreign-keys-check' => true
         );
@@ -979,6 +980,9 @@ class Mysqldump
 
         if ($this->dumpSettings['where']) {
             $stmt .= " WHERE {$this->dumpSettings['where']}";
+        }
+        if ($this->dumpSettings['keep-data']) {
+          $stmt .= " WHERE {$this->dumpSettings['keep-data'][$tableName]['col']} IN ({$this->dumpSettings['keep-data'][$tableName]['rows']})";
         }
         $resultSet = $this->dbHandler->query($stmt);
         $resultSet->setFetchMode(PDO::FETCH_ASSOC);
