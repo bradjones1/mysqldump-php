@@ -176,8 +176,8 @@ class Mysqldump {
       $pdoSettingsDefault[PDO::MYSQL_ATTR_USE_BUFFERED_QUERY] = FALSE;
     }
 
-    $this->pdoSettings = self::array_replace_recursive($pdoSettingsDefault, $pdoSettings);
-    $this->dumpSettings = self::array_replace_recursive($dumpSettingsDefault, $dumpSettings);
+    $this->pdoSettings = array_replace_recursive($pdoSettingsDefault, $pdoSettings);
+    $this->dumpSettings = array_replace_recursive($dumpSettingsDefault, $dumpSettings);
     $this->dumpSettings['init_commands'][] = 'SET NAMES ' . $this->dumpSettings['default-character-set'];
 
     if (FALSE === $this->dumpSettings['skip-tz-utc']) {
