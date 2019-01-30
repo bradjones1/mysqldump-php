@@ -968,7 +968,7 @@ class Mysqldump {
     if ($this->dumpSettings['where']) {
       $stmt .= " WHERE {$this->dumpSettings['where']}";
     }
-    if ($this->dumpSettings['keep-data']) {
+    if (isset($this->dumpSettings['keep-data'][$tableName])) {
       $stmt .= " WHERE {$this->dumpSettings['keep-data'][$tableName]['col']} IN ({$this->dumpSettings['keep-data'][$tableName]['rows']})";
     }
     $resultSet = $this->dbHandler->query($stmt);
