@@ -865,12 +865,13 @@ class Mysqldump {
    *   Values.
    */
   private function prepareColumnValues($tableName, $row) {
-    $ret         = [];
+    $ret         = '';
     $columnTypes = $this->tableColumnTypes[$tableName];
     foreach ($row as $colName => $colValue) {
       $colValue = $this->hookTransformColumnValue($tableName, $colName, $colValue, $row);
-      $ret[]    = $this->escape($colValue, $columnTypes[$colName]);
+      $ret = $this->escape($colValue, $columnTypes[$colName]) . ',';
     }
+    $ret = rtrim($ret, ',');
 
     return $ret;
   }
@@ -962,6 +963,7 @@ class Mysqldump {
     if ($this->dumpSettings['complete-insert']) {
       $colNames = $this->getColumnNames($tableName);
     }
+    $colNamesString = implode(", ", $colNames);
 
     $stmt = "SELECT " . implode(",", $colStmt) . " FROM `$tableName`";
 
@@ -982,19 +984,19 @@ class Mysqldump {
         if ($this->dumpSettings['complete-insert']) {
           $lineSize += $this->compressManager->write(
             "INSERT$ignore INTO `$tableName` (" .
-            implode(", ", $colNames) .
-            ") VALUES (" . implode(",", $vals) . ")"
+            $colNamesString .
+            ") VALUES (" . $vals . ")"
           );
         }
         else {
           $lineSize += $this->compressManager->write(
-            "INSERT$ignore INTO `$tableName` VALUES (" . implode(",", $vals) . ")"
+            "INSERT$ignore INTO `$tableName` VALUES (" . $vals . ")"
           );
         }
         $onlyOnce = FALSE;
       }
       else {
-        $lineSize += $this->compressManager->write(",(" . implode(",", $vals) . ")");
+        $lineSize += $this->compressManager->write(",(" . $vals . ")");
       }
       if (($lineSize > $this->dumpSettings['net_buffer_length']) ||
         !$this->dumpSettings['extended-insert']) {
